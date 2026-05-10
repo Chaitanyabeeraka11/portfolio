@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beeraka Chaitanya — ServiceNow Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #080808;
+    --surface:  #111111;
+    --border:   #1e1e1e;
+    --gold:     #C9A84C;
+    --gold-dim: rgba(201,168,76,0.10);
+    --text:     #EDE9E0;
+    --muted:    #666;
+    --subtle:   #2a2a2a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 50;
+    padding: 16px 0;
+    background: rgba(8,8,8,0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 680px; margin: 0 auto; padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 500; color: var(--text); letter-spacing: 0.04em; }
+  .nav-links { display: flex; gap: 20px; list-style: none; }
+  .nav-links a { font-size: 0.68rem; font-weight: 400; color: var(--muted); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* LAYOUT */
+  .container { max-width: 680px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 72px 0; border-top: 1px solid var(--border); }
+
+  .section-label {
+    font-size: 0.62rem; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 36px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, var(--border), transparent); }
+
+  /* HERO */
+  #hero { min-height: 100svh; display: flex; align-items: flex-end; padding-top: 80px; padding-bottom: 72px; }
+  .hero-eyebrow { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; display: block; opacity: 0; animation: fadeUp 0.6s 0.2s ease forwards; }
+  .hero-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.8rem, 10vw, 4.4rem); font-weight: 300; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 6px; opacity: 0; animation: fadeUp 0.7s 0.35s ease forwards; }
+  .hero-name span { color: var(--gold); }
+  .hero-role { font-size: 0.82rem; color: var(--muted); letter-spacing: 0.04em; margin-bottom: 28px; opacity: 0; animation: fadeUp 0.7s 0.5s ease forwards; }
+  .hero-summary { font-size: 0.92rem; line-height: 1.8; color: #999; max-width: 540px; margin-bottom: 40px; opacity: 0; animation: fadeUp 0.7s 0.65s ease forwards; }
+  .hero-summary strong { color: var(--text); font-weight: 400; }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.7s 0.8s ease forwards; }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; font-family: 'Outfit', sans-serif; font-size: 0.76rem; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; text-decoration: none; border-radius: 2px; cursor: pointer; border: none; transition: all 0.2s ease; }
+  .btn-primary { background: var(--gold); color: #080808; }
+  .btn-primary:hover { background: #dbb85a; transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
+
+  /* SKILLS */
+  .skills-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skill-tag { font-size: 0.73rem; padding: 6px 13px; border: 1px solid var(--border); border-radius: 2px; color: #888; transition: all 0.2s; cursor: default; }
+  .skill-tag:hover { border-color: var(--gold); color: var(--gold); }
+  .skill-tag.hi { border-color: #2a2a2a; color: var(--text); }
+
+  /* EXPERIENCE */
+  .exp-item { margin-bottom: 52px; }
+  .exp-item:last-child { margin-bottom: 0; }
+  .exp-company { font-family: 'Cormorant Garamond', serif; font-size: 1.45rem; font-weight: 400; margin-bottom: 5px; }
+  .exp-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-bottom: 16px; }
+  .exp-role { font-size: 0.8rem; color: var(--gold); }
+  .exp-period, .exp-loc { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.03em; }
+  .exp-sep { color: var(--subtle); }
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .exp-bullets li { font-size: 0.86rem; line-height: 1.72; color: #888; padding-left: 16px; position: relative; }
+  .exp-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--subtle); font-size: 0.72rem; }
+
+  /* PROJECTS */
+  .projects-grid { display: flex; flex-direction: column; gap: 20px; }
+  .project-card { border: 1px solid var(--border); border-radius: 6px; background: var(--surface); padding: 24px 20px; position: relative; overflow: hidden; transition: border-color 0.25s, background 0.25s; }
+  .project-card::after { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--gold); opacity: 0; transition: opacity 0.25s; }
+  .project-card:hover { border-color: rgba(201,168,76,0.3); background: var(--gold-dim); }
+  .project-card:hover::after { opacity: 1; }
+  .project-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .project-title { font-family: 'Cormorant Garamond', serif; font-size: 1.22rem; font-weight: 400; color: var(--text); }
+  .project-badge { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(201,168,76,0.35); color: var(--gold); white-space: nowrap; flex-shrink: 0; }
+  .project-desc { font-size: 0.84rem; line-height: 1.75; color: #888; margin-bottom: 18px; }
+  .project-feats { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+  .feat-row { display: flex; gap: 10px; align-items: flex-start; }
+  .feat-key { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.04em; color: var(--gold); white-space: nowrap; padding-top: 2px; min-width: 82px; }
+  .feat-val { font-size: 0.82rem; line-height: 1.65; color: #888; }
+  .feat-val code { font-family: monospace; font-size: 0.76rem; color: var(--gold); background: var(--gold-dim); padding: 1px 5px; border-radius: 2px; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .p-tag { font-size: 0.66rem; padding: 3px 10px; border: 1px solid var(--border); border-radius: 2px; color: var(--muted); }
+
+  /* CERTS */
+  .certs-grid { display: flex; flex-direction: column; gap: 10px; }
+  .cert-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); transition: border-color 0.2s, background 0.2s; }
+  .cert-item:hover { border-color: var(--gold); background: var(--gold-dim); }
+  .cert-ico { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 600; color: var(--gold); }
+  .cert-name { font-size: 0.82rem; color: var(--text); line-height: 1.4; }
+
+  /* EDUCATION */
+  .edu-item { margin-bottom: 26px; }
+  .edu-item:last-child { margin-bottom: 0; }
+  .edu-school { font-family: 'Cormorant Garamond', serif; font-size: 1.18rem; font-weight: 400; margin-bottom: 3px; }
+  .edu-degree { font-size: 0.8rem; color: #999; margin-bottom: 4px; }
+  .edu-meta { font-size: 0.72rem; color: var(--muted); }
+  .edu-cgpa { color: var(--gold); }
+
+  /* CONTACT */
+  .contact-links { display: flex; flex-direction: column; gap: 12px; }
+  .contact-row { display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--text); padding: 14px 16px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.84rem; transition: all 0.2s; }
+  .contact-row:hover { border-color: var(--gold); color: var(--gold); }
+  .contact-type { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-left: auto; }
+
+  /* FOOTER */
+  footer { padding: 30px 0 44px; border-top: 1px solid var(--border); text-align: center; font-size: 0.7rem; color: var(--subtle); letter-spacing: 0.07em; }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.vis { opacity: 1; transform: none; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 480px) {
+    .nav-links { gap: 14px; }
+    .nav-links a { font-size: 0.6rem; }
+    section { padding: 56px 0; }
+    .hero-ctas { flex-direction: column; }
+    .btn { justify-content: center; }
+    .feat-key { min-width: 66px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">BC</span>
+    <ul class="nav-links">
+      <li><a href="#experience">Work</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#certifications">Certs</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="container">
+    <span class="hero-eyebrow">ServiceNow Developer · Chennai, India</span>
+    <h1 class="hero-name">Beeraka<br><span>Chaitanya</span></h1>
+    <p class="hero-role">Analyst @ CubeSimple &nbsp;·&nbsp; CSA · CAD · CIS-ITSM · CIS-HRSD · CIS-DF</p>
+    <p class="hero-summary">Certified ServiceNow developer with deep expertise in <strong>TSM Order Management</strong>, <strong>ITSM</strong>, and <strong>HRSD</strong>. Building complex telecom lifecycle automation with Flow Designer, REST APIs, and custom scripting — reducing manual workflows by <strong>30%</strong> and cutting resolution times from 2 days to 6 hours.</p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn btn-primary">Get in Touch</a>
+      <a href="B_CHAITANYA_CV.pdf" download class="btn btn-ghost">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Resume
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="container">
+    <div class="section-label">Technical Skills</div>
+    <div class="skills-grid reveal">
+      <span class="skill-tag hi">TSM Order Management</span>
+      <span class="skill-tag hi">ITSM</span>
+      <span class="skill-tag hi">HRSD</span>
+      <span class="skill-tag hi">Flow Designer</span>
+      <span class="skill-tag hi">REST APIs</span>
+      <span class="skill-tag">Business Rules</span>
+      <span class="skill-tag">Client Scripts</span>
+      <span class="skill-tag">UI Policies</span>
+      <span class="skill-tag">UI Actions</span>
+      <span class="skill-tag">ACLs</span>
+      <span class="skill-tag">Service Portal</span>
+      <span class="skill-tag">GRC – IRM</span>
+      <span class="skill-tag">Privacy Management</span>
+      <span class="skill-tag">JavaScript</span>
+      <span class="skill-tag">Python</span>
+      <span class="skill-tag">JSON / XML</span>
+      <span class="skill-tag">HTML / CSS</span>
+      <span class="skill-tag">SQL</span>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="container">
+    <div class="section-label">Experience</div>
+
+    <div class="exp-item reveal">
+      <div class="exp-company">CubeSimple</div>
+      <div class="exp-meta">
+        <span class="exp-role">Analyst – ServiceNow</span>
+        <span class="exp-sep">·</span>
+        <span class="exp-period">Sep 2025 – Present</span>
+        <span class="exp-sep">·</span>
+        <span class="exp-loc">Chennai, India</span>
+      </div>
+      <ul class="exp-bullets">
+        <li>Owns full lifecycle of telecom orders in TSM — managing complex Add &amp; Change requests end-to-end.</li>
+        <li>Built Flow Designer Custom Actions with JSON-parsing scripts to auto-update downstream systems (c360, MaestroE) and generate dynamic payloads for speed-only change orders, eliminating manual data entry.</li>
+        <li>Enhanced Service Portal with custom widgets — email history display, preview-without-open feature, and dispatch transaction views per order.</li>
+        <li>Designed Sub-flows for Product Order, OrderLineItem, and Product Inventory creation on supplementary orders.</li>
+        <li>Implemented PATCH API logic to update Product Order Characteristics on supplementary order placement.</li>
+      </ul>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-company">HCL Technologies</div>
+      <div class="exp-meta">
+        <span class="exp-role">Engineer Trainee / ServiceNow Developer</span>
+        <span class="exp-sep">·</span>
+        <span class="exp-period">Oct 2024 – Jul 2025</span>
+        <span class="exp-sep">·</span>
+        <span class="exp-loc">Chennai, India</span>
+      </div>
+      <ul class="exp-bullets">
+        <li>Set up ITSM and HRSD modules from scratch — requirements gathering, configuration, and UAT.</li>
+        <li>Wrote 15+ scripts (Business Rules, Client Scripts, UI Actions) cutting ticket resolution time by 30%.</li>
+        <li>Built 10+ automated Flow Designer workflows, reducing request completion from 2 days to 6 hours.</li>
+        <li>Integrated ServiceNow with third-party apps via REST APIs using JavaScript and XML.</li>
+        <li>Configured ACLs for system security and Inbound Email Actions for auto-ticket creation.</li>
+        <li>Delivered production bug fixes saving 20+ hours of manual troubleshooting per week.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="container">
+    <div class="section-label">Personal Projects</div>
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <div class="project-top">
+          <h3 class="project-title">Closed-Loop Resolution Agent</h3>
+          <span class="project-badge">PDI · AI Agent</span>
+        </div>
+        <p class="project-desc">A fully autonomous run-time operational agent in ServiceNow PDI — bridges Gemini API with native ServiceNow architecture to execute governed, end-to-end incident resolution beyond what Now Assist offers.</p>
+        <div class="project-feats">
+          <div class="feat-row">
+            <span class="feat-key">Triage &amp; RCA</span>
+            <span class="feat-val">Autonomously reads incidents, extracts CI context, and diagnoses probable root cause using Gemini API for cognitive reasoning.</span>
+          </div>
+          <div class="feat-row">
+            <span class="feat-key">Risk Scoring</span>
+            <span class="feat-val">Assigns deterministic Confidence Scores and Risk Levels (Low / Medium / High) to each proposed solution before execution.</span>
+          </div>
+          <div class="feat-row">
+            <span class="feat-key">Governed Flow</span>
+            <span class="feat-val">Flow Designer fast-tracks Low Risk actions directly; Medium/High Risk routes to a human approval gate automatically.</span>
+          </div>
+          <div class="feat-row">
+            <span class="feat-key">Zero Touch</span>
+            <span class="feat-val">Simulates the fix, verifies system health, and auto-drafts professional closure notes with no manual steps.</span>
+          </div>
+          <div class="feat-row">
+            <span class="feat-key">Op Memory</span>
+            <span class="feat-val">Every AI recommendation and outcome logged to <code>u_ai_resolution_log</code> for continuous learning and future RAG.</span>
+          </div>
+        </div>
+        <div class="project-tags">
+          <span class="p-tag">Gemini API</span>
+          <span class="p-tag">Async Business Rules</span>
+          <span class="p-tag">Script Includes</span>
+          <span class="p-tag">Flow Designer</span>
+          <span class="p-tag">ITSM</span>
+          <span class="p-tag">Agentic AI</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-top">
+          <h3 class="project-title">AI Code Analyst — ServiceNow</h3>
+          <span class="project-badge">PDI · Dev Tool</span>
+        </div>
+        <p class="project-desc">Context-aware AI code analysis tool embedded inside ServiceNow — auto-grabs the full script from any field and sends it to Gemini 2.5 Flash for deep review. No copy-paste, no manual highlighting.</p>
+        <div class="project-feats">
+          <div class="feat-row">
+            <span class="feat-key">Full Context</span>
+            <span class="feat-val">Reads the entire script file at once — variables, dependencies, logic — not just selected lines like Now Assist requires.</span>
+          </div>
+          <div class="feat-row">
+            <span class="feat-key">Deep Analysis</span>
+            <span class="feat-val">Acts as a peer reviewer: explains legacy Script Includes, audits entire flows for logic errors — not just code generation.</span>
+          </div>
+          <div class="feat-row">
+            <span class="feat-key">Flash Speed</span>
+            <span class="feat-val">Gemini 2.5 Flash's massive context window enables instant, full-length script reviews on complex production code.</span>
+          </div>
+        </div>
+        <div class="project-tags">
+          <span class="p-tag">Gemini 2.5 Flash</span>
+          <span class="p-tag">Script Includes</span>
+          <span class="p-tag">Client Scripts</span>
+          <span class="p-tag">Now Assist</span>
+          <span class="p-tag">JavaScript</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="container">
+    <div class="section-label">Certifications</div>
+    <div class="certs-grid reveal">
+      <div class="cert-item">
+        <div class="cert-ico">CSA</div>
+        <span class="cert-name">Certified System Administrator</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-ico">CAD</div>
+        <span class="cert-name">Certified Application Developer</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-ico">CIS</div>
+        <span class="cert-name">Certified Implementation Specialist – ITSM</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-ico">CIS</div>
+        <span class="cert-name">Certified Implementation Specialist – HRSD</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-ico">CIS</div>
+        <span class="cert-name">Certified Implementation Specialist – Data Foundations</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="container">
+    <div class="section-label">Education</div>
+    <div class="reveal">
+      <div class="edu-item">
+        <div class="edu-school">Pragati Engineering College</div>
+        <div class="edu-degree">B.Tech — Computer Science &amp; Engineering (IT Specialization)</div>
+        <div class="edu-meta">Andhra Pradesh &nbsp;·&nbsp; <span class="edu-cgpa">CGPA 7.67 / 10</span></div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-school">Tirumala Junior Kalasala</div>
+        <div class="edu-degree">Intermediate – MPC</div>
+        <div class="edu-meta">Andhra Pradesh &nbsp;·&nbsp; <span class="edu-cgpa">CGPA 9.3 / 10</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <div class="section-label">Contact</div>
+    <div class="contact-links reveal">
+      <a href="mailto:chaitanyabeeraka@gmail.com" class="contact-row">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+        chaitanyabeeraka@gmail.com
+        <span class="contact-type">Email</span>
+      </a>
+      <a href="tel:+916304053201" class="contact-row">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.14 12a19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 3.05 1.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.14a16 16 0 0 0 5.76 5.76l1.21-1.21a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.03z"/></svg>
+        +91 6304053201
+        <span class="contact-type">Phone</span>
+      </a>
+      <a href="https://www.linkedin.com/in/chaitanyaB11" target="_blank" class="contact-row">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        linkedin.com/in/chaitanyaB11
+        <span class="contact-type">LinkedIn</span>
+      </a>
+    </div>
+    <div style="margin-top:32px;text-align:center;">
+      <a href="B_CHAITANYA_CV.pdf" download class="btn btn-primary" style="display:inline-flex;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Full Resume
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">© 2025 Beeraka Chaitanya &nbsp;·&nbsp; Chennai, India</div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('vis');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
